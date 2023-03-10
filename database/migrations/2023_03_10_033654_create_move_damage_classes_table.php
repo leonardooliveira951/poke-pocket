@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pokemon', function (Blueprint $table) {
+        Schema::create('move_damage_classes', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
-            $table->decimal('height');
-            $table->decimal('weight');
-            $table->decimal('base_experience');
-            $table->json('sprites');
+            $table->string('description', 250);
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pokemon');
+        Schema::dropIfExists('move_damage_classes');
     }
 };
