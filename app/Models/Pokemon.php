@@ -14,11 +14,19 @@ class Pokemon extends Model
         'name',
         'height',
         'weight',
+        'base_experience',
         'sprites',
     ];
 
-    // public function moves()
-    // {
-    //     return $this->hasMany(Move::class);
-    // }
+    public function moves()
+    {
+        return $this->hasMany(Move::class);
+    }
+
+    public function stats()
+    {
+        return $this->belongsToMany(Stat::class)
+            ->withTimestamps()
+            ->withPivot('value');
+    }
 }
