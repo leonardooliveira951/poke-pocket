@@ -30,9 +30,9 @@ services:
             POSTGRES_PASSWORD: '${DB_PASSWORD}'
             POSTGRES_USER: '${DB_USERNAME}'
             POSTGRES_DB: '${DB_DATABASE}'
-            PGDATA: /data/postgres
+            PGDATA: /var/lib/postgresql/data
         volumes:
-            - 'poke-db:/var/lib/postgresql'
+            - poke-db:/var/lib/postgresql/data
         env_file:
             - .env
         networks:
