@@ -20,7 +20,8 @@ class Pokemon extends Model
 
     public function moves()
     {
-        return $this->hasMany(Move::class);
+        return $this->belongsToMany(Move::class)
+            ->withTimestamps();;
     }
 
     public function stats()
@@ -28,5 +29,17 @@ class Pokemon extends Model
         return $this->belongsToMany(Stat::class)
             ->withTimestamps()
             ->withPivot('value');
+    }
+
+    public function types()
+    {
+        return $this->belongsToMany(Type::class)
+            ->withTimestamps();
+    }
+
+    public function abilities()
+    {
+        return $this->belongsToMany(Ability::class)
+            ->withTimestamps();
     }
 }
