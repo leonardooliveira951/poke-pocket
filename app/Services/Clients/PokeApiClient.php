@@ -47,4 +47,32 @@ class PokeApiClient
         }
         return $ability;
     }
+
+    public function getTypeById(int|string $id)
+    {
+        $ability = json_decode(
+            Http::get(
+                $this->baseUri . "/type/{$id}/"
+            )->getBody()->getContents()
+        );
+
+        if (is_null($ability)) {
+            throw new PokeApiClienItemNotFoundException($id);
+        }
+        return $ability;
+    }
+
+    public function getMoveDmgClassById(int|string $id)
+    {
+        $moveDmgClass = json_decode(
+            Http::get(
+                $this->baseUri . "/move-damage-class/{$id}/"
+            )->getBody()->getContents()
+        );
+
+        if (is_null($moveDmgClass)) {
+            throw new PokeApiClienItemNotFoundException($id);
+        }
+        return $moveDmgClass;
+    }
 }
