@@ -13,6 +13,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         logger("Database seeding. It might take a while");
+        
         $this->call(AbilitySeeder::class);
+        $this->call(TypeSeeder::class);
+        $this->call(MoveDamageClassSeeder::class);
+        $this->call(MoveSeeder::class);
     }
 }

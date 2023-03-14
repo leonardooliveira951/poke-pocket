@@ -4,7 +4,9 @@ namespace App\Services\PokemonService;
 
 use App\Exceptions\PokeApiClienItemNotFoundException;
 use App\Models\Ability;
+use App\Models\MoveDamageClass;
 use App\Models\Pokemon;
+use App\Models\Type;
 use App\Services\Clients\PokeApiClient;
 
 class PokemonService
@@ -39,12 +41,12 @@ class PokemonService
                     $englishDescription = "";
 
                     foreach ($ability->effect_entries as $description)
-                        {
-                            if ($description->language->name == "en") {
-                                $englishDescription = $description->short_effect;
-                                break;
-                            }
+                    {
+                        if ($description->language->name == "en") {
+                            $englishDescription = $description->short_effect;
+                            break;
                         }
+                    }
                     Ability::updateOrCreate(
                         ['id' => $id],
                         [
@@ -57,6 +59,76 @@ class PokemonService
             logger($e->message($id));
             $lastInsert = $id - 1;
             logger("Ability - Last inserted ID was $lastInsert");
+        }
+    }
+
+    public function typeExternalFetchAndSave()
+    {
+        try {
+            for ($id = 1; $id <= 18; $id++) {
+                $type = $this->pokeApiClient->getTypeById($id);
+
+                Type::updateOrCreate(
+                    ['id' => $id],
+                    [
+                        'name' => $type->name,
+                    ]
+                );
+            }
+        } catch (PokeApiClienItemNotFoundException $e) {
+            logger($e->message($id));
+            $lastInsert = $id - 1;
+            logger("Type - Last inserted ID was $lastInsert");
+        }
+    }
+
+    public function moveFetchAndSave()
+    {
+        try {
+            for ($id = 1; $id <= 18; $id++) {
+                $type = $this->pokeApiClient->getTypeById($id);
+
+                Type::updateOrCreate(
+                    ['id' => $id],
+                    [
+                        'name' => $type->name,
+                    ]
+                );
+            }
+        } catch (PokeApiClienItemNotFoundException $e) {
+            logger($e->message($id));
+            $lastInsert = $id - 1;
+            logger("Type - Last inserted ID was $lastInsert");
+        }
+    }
+
+    public function moveDmgClassFetchAndSave()
+    {
+        try {
+            for ($id = 1; $id <= 10; $id++) {
+                $moveDmgClass = $this->pokeApiClient->getMoveDmgClassById($id);
+                $englishDescription = "";
+
+                foreach ($moveDmgClass->descriptions as $description)
+                {
+                    if ($description->language->name == "en") {
+                        logger($description->description);
+                        $englishDescription = $description->description;
+                        break;
+                    }
+                }
+                MoveDamageClass::updateOrCreate(
+                    ['id' => $id],
+                    [
+                        'name' => $moveDmgClass->name,
+                        'description' => $englishDescription,
+                    ]
+                );
+            }
+        } catch (PokeApiClienItemNotFoundException $e) {
+            logger($e->message($id));
+            $lastInsert = $id - 1;
+            logger("Move Damage Class - Last inserted ID was $lastInsert");
         }
     }
 
