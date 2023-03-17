@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name', 50);
             $table->string('description', 250);
-            $table->decimal('power');
-            $table->decimal('accuracy');
-            $table->decimal('pp');
-            $table->boolean('priority')->default(false);
+            $table->decimal('power')->nullable();
+            $table->decimal('accuracy')->nullable();
+            $table->decimal('pp')->nullable();
+            $table->smallInteger('priority')->default(0);
             $table->foreignId('type_id')->constrained('types');
             $table->foreignId('move_damage_classes_id')->constrained('move_damage_classes');
             $table->timestamps();
