@@ -75,4 +75,18 @@ class PokeApiClient
         }
         return $moveDmgClass;
     }
+
+    public function getMoveById(int|string $id)
+    {
+        $move = json_decode(
+            Http::get(
+                $this->baseUri . "/move/{$id}/"
+            )->getBody()->getContents()
+        );
+
+        if (is_null($move)) {
+            throw new PokeApiClienItemNotFoundException($id);
+        }
+        return $move;
+    }
 }

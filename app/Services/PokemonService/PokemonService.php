@@ -4,10 +4,12 @@ namespace App\Services\PokemonService;
 
 use App\Exceptions\PokeApiClienItemNotFoundException;
 use App\Models\Ability;
+use App\Models\Move;
 use App\Models\MoveDamageClass;
 use App\Models\Pokemon;
 use App\Models\Type;
 use App\Services\Clients\PokeApiClient;
+use Illuminate\Support\Str;
 
 class PokemonService
 {
@@ -85,20 +87,37 @@ class PokemonService
     public function moveFetchAndSave()
     {
         try {
-            for ($id = 1; $id <= 18; $id++) {
-                $type = $this->pokeApiClient->getTypeById($id);
+            
+            for ($id = 1; $id <= 400; $id++) {
+                $move = $this->pokeApiClient->getMoveById($id);
+                $englishDescription = "";
 
-                Type::updateOrCreate(
+                foreach ($move->effect_entries as $description) {
+                    if ($description->language->name == "en") {
+                        $englishDescription = $description->short_effect;
+                        break;
+                    }
+                }
+                $typeId = Str::between($move->type->url, 'type/', '/');
+                $damageClassId = Str::between($move->damage_class->url, 'move-damage-class/', '/');
+
+                Move::updateOrCreate(
                     ['id' => $id],
                     [
-                        'name' => $type->name,
-                    ]
-                );
+                        'name' => $move->name,
+                        'description' => $englishDescription,
+                        'power' => $move->power,
+                        'accuracy' => $move->accuracy,
+                        'pp' => $move->pp,
+                        'priority' => $move->priority,
+                        'type_id' => $typeId,
+                        'move_damage_classes_id' => $damageClassId,
+                    ]);
             }
         } catch (PokeApiClienItemNotFoundException $e) {
             logger($e->message($id));
             $lastInsert = $id - 1;
-            logger("Type - Last inserted ID was $lastInsert");
+            logger("Move - Last inserted ID was $lastInsert");
         }
     }
 
