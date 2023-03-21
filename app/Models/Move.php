@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Move extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+    ];
+
+    public function type()
+    {
+        return $this->belongsTo(Type::class);
+    }
 }
