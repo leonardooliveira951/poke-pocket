@@ -26,9 +26,7 @@ class Pokemon extends Model
 
     public function stats()
     {
-        return $this->belongsToMany(Stat::class)
-            ->withTimestamps()
-            ->withPivot('value');
+        return $this->belongsToMany(Stat::class)->withPivot('value');
     }
 
     public function types()

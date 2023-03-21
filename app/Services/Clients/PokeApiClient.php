@@ -89,4 +89,18 @@ class PokeApiClient
         }
         return $move;
     }
+
+    public function getStatById(int|string $id)
+    {
+        $stat = json_decode(
+            Http::get(
+                $this->baseUri . "/stat/{$id}/"
+            )->getBody()->getContents()
+        );
+
+        if (is_null($stat)) {
+            throw new PokeApiClienItemNotFoundException($id);
+        }
+        return $stat;
+    }
 }

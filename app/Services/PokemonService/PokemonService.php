@@ -7,6 +7,7 @@ use App\Models\Ability;
 use App\Models\Move;
 use App\Models\MoveDamageClass;
 use App\Models\Pokemon;
+use App\Models\Stat;
 use App\Models\Type;
 use App\Services\Clients\PokeApiClient;
 use Illuminate\Support\Str;
@@ -28,7 +29,8 @@ class PokemonService
                     'height' => $pokemon->height,
                     'weight' => $pokemon->weight,
                     'base_experience' => $pokemon->weight,
-                    'sprites' => json_encode($pokemon->sprites)                
+                    'sprites' => json_encode($pokemon->sprites),
+                    'type_id'
                 ]
             );
         }
@@ -148,6 +150,27 @@ class PokemonService
             logger($e->message($id));
             $lastInsert = $id - 1;
             logger("Move Damage Class - Last inserted ID was $lastInsert");
+        }
+    }
+
+    public function statFetchAndSave()
+    {
+        try {
+            for ($id = 1; $id <= 15; $id++) {
+                $stat = $this->pokeApiClient->getStatById($id);
+
+                Stat::updateOrCreate(
+                    ['id' => $id],
+                    [
+                        'name' => $stat->name,
+                        'is_battle_only' => $stat->is_battle_only,
+                    ]
+                );
+            }
+        } catch (PokeApiClienItemNotFoundException $e) {
+            logger($e->message($id));
+            $lastInsert = $id - 1;
+            logger("Stat - Last inserted ID was $lastInsert");
         }
     }
 

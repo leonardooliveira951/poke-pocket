@@ -11,4 +11,9 @@ class Stat extends Model
 
     protected $fillable = [
     ];
+
+    public function pokemons()
+    {
+        return $this->belongsToMany(Pokemon::class)->withPivot('value');
+    }
 }
