@@ -17,7 +17,6 @@ return new class extends Migration
             $table->decimal('height');
             $table->decimal('weight');
             $table->decimal('base_experience');
-            $table->integer('type_id')->constrained();
             $table->json('sprites');
             $table->timestamps();
         });
