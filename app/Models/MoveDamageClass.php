@@ -9,6 +9,9 @@ class MoveDamageClass extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+    ];
+
     public function moves()
     {
         return $this->hasMany(Move::class)
