@@ -12,11 +12,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        logger("Database seeding. It might take a while");
+        print("Database seeding. It might take a while \n");
         
         $this->call(AbilitySeeder::class);
         $this->call(TypeSeeder::class);
         $this->call(MoveDamageClassSeeder::class);
         $this->call(MoveSeeder::class);
+        $this->call(StatSeeder::class);
+        // $this->call(PokemonSeeder::class);
     }
 }
