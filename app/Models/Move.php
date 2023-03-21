@@ -16,4 +16,9 @@ class Move extends Model
     {
         return $this->belongsTo(Type::class);
     }
+
+    public function moveDamageClass()
+    {
+        return $this->belongsTo(MoveDamageClass::class);
+    }
 }
