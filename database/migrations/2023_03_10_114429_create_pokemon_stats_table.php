@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->integer('pokemon_id')->constrained();
             $table->integer('stat_id')->constrained();
-            $table->integer('value');
+            $table->integer('base_stat')->nullable();
+            $table->integer('effort')->nullable();
             $table->timestamps();
         });
     }

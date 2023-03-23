@@ -20,19 +20,21 @@ class PokemonService
 
     public function externalFetchAndSave()
     {
-        for ($id = 1; $id<=150; $id++) {
+        for ($id = 1; $id<=10; $id++) {
             $pokemon = $this->pokeApiClient->getPokemonById($id);
-            Pokemon::firstOrCreate(
+            $pokemonModel = Pokemon::firstOrCreate(
                 ['id' => $id],
                 [
                     'name' => $pokemon->name,
                     'height' => $pokemon->height,
                     'weight' => $pokemon->weight,
-                    'base_experience' => $pokemon->weight,
+                    'base_experience' => $pokemon->base_experience,
                     'sprites' => json_encode($pokemon->sprites),
-                    'type_id'
                 ]
             );
+            
+            $this->attachPokemonTypes($pokemon->types, $pokemonModel);
+            $this->attachPokemonStats($pokemon->stats, $pokemonModel);
         }
         return $pokemon;
     }
@@ -60,7 +62,6 @@ class PokemonService
                     );
             } 
         } catch (PokeApiClienItemNotFoundException $e) {
-            logger($e->message($id));
             $lastInsert = $id - 1;
             logger("Ability - Last inserted ID was $lastInsert");
         }
@@ -69,7 +70,7 @@ class PokemonService
     public function typeExternalFetchAndSave()
     {
         try {
-            for ($id = 1; $id <= 18; $id++) {
+            for ($id = 1; $id <= 20; $id++) {
                 $type = $this->pokeApiClient->getTypeById($id);
 
                 Type::updateOrCreate(
@@ -80,7 +81,6 @@ class PokemonService
                 );
             }
         } catch (PokeApiClienItemNotFoundException $e) {
-            logger($e->message($id));
             $lastInsert = $id - 1;
             logger("Type - Last inserted ID was $lastInsert");
         }
@@ -90,7 +90,7 @@ class PokemonService
     {
         try {
             
-            for ($id = 1; $id <= 400; $id++) {
+            for ($id = 1; $id <= 1000; $id++) {
                 $move = $this->pokeApiClient->getMoveById($id);
                 $englishDescription = "";
 
@@ -117,7 +117,6 @@ class PokemonService
                     ]);
             }
         } catch (PokeApiClienItemNotFoundException $e) {
-            logger($e->message($id));
             $lastInsert = $id - 1;
             logger("Move - Last inserted ID was $lastInsert");
         }
@@ -133,7 +132,6 @@ class PokemonService
                 foreach ($moveDmgClass->descriptions as $description)
                 {
                     if ($description->language->name == "en") {
-                        logger($description->description);
                         $englishDescription = $description->description;
                         break;
                     }
@@ -147,7 +145,6 @@ class PokemonService
                 );
             }
         } catch (PokeApiClienItemNotFoundException $e) {
-            logger($e->message($id));
             $lastInsert = $id - 1;
             logger("Move Damage Class - Last inserted ID was $lastInsert");
         }
@@ -168,7 +165,6 @@ class PokemonService
                 );
             }
         } catch (PokeApiClienItemNotFoundException $e) {
-            logger($e->message($id));
             $lastInsert = $id - 1;
             logger("Stat - Last inserted ID was $lastInsert");
         }
@@ -178,4 +174,36 @@ class PokemonService
     {
         return Pokemon::findOrFail($id);
     }
+
+    private function attachPokemonTypes($typesArrayFromPokeApi, Pokemon $pokemonModel)
+    {
+        $types = [];
+
+        $typeId = Str::between($typesArrayFromPokeApi[0]->type->url, 'type/', '/');
+        array_push($types, $typeId);
+
+        if (array_key_exists(1, $typesArrayFromPokeApi)) {
+            $typeId2 = Str::between($typesArrayFromPokeApi[0]->type->url, 'type/', '/');
+            array_push($types, $typeId2);
+        }
+        $pokemonModel->types()->attach($types);
+    }
+
+    private function attachPokemonStats($statsArrayFromPokeApi, $pokemon)
+    {
+        foreach ($statsArrayFromPokeApi as $stat) {
+            $statId = Str::between($stat->stat->url, 'stat/', '/');
+            $existingRecord = $pokemon->stats()->wherePivot('stat_id', $statId)
+            ->wherePivot('pokemon_id', $pokemon->id)
+                ->first();
+            
+            if (!$existingRecord) {
+                $pokemon->stats()->attach($statId, [
+                    'base_stat' => $stat->base_stat,
+                    'effort' => $stat->effort
+                ]);
+            }
+        }
+    }
+
 }
