@@ -175,18 +175,18 @@ class PokemonService
         return Pokemon::findOrFail($id);
     }
 
-    private function attachPokemonTypes($typesArrayFromPokeApi, Pokemon $pokemonModel)
+    private function attachPokemonTypes($typesArrayFromPokeApi, Pokemon $pokemon)
     {
-        $types = [];
+        foreach ($typesArrayFromPokeApi as $type) {
+            $typeId = Str::between($type->type->url, 'type/', '/');
+            $existingRecord = $pokemon->types()->wherePivot('type_id', $typeId)
+                ->wherePivot('pokemon_id', $pokemon->id)
+                ->first();
 
-        $typeId = Str::between($typesArrayFromPokeApi[0]->type->url, 'type/', '/');
-        array_push($types, $typeId);
-
-        if (array_key_exists(1, $typesArrayFromPokeApi)) {
-            $typeId2 = Str::between($typesArrayFromPokeApi[0]->type->url, 'type/', '/');
-            array_push($types, $typeId2);
+            if (!$existingRecord) {
+                $pokemon->types()->attach($typeId);
+            }
         }
-        $pokemonModel->types()->attach($types);
     }
 
     private function attachPokemonStats($statsArrayFromPokeApi, $pokemon)
@@ -194,8 +194,8 @@ class PokemonService
         foreach ($statsArrayFromPokeApi as $stat) {
             $statId = Str::between($stat->stat->url, 'stat/', '/');
             $existingRecord = $pokemon->stats()->wherePivot('stat_id', $statId)
-            ->wherePivot('pokemon_id', $pokemon->id)
-                ->first();
+                ->wherePivot('pokemon_id', $pokemon->id)
+                    ->first();
             
             if (!$existingRecord) {
                 $pokemon->stats()->attach($statId, [
