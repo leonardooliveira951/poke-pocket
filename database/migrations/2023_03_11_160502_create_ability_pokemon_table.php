@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('pokemon_id')->constrained();
             $table->integer('ability_id')->constrained();
+            $table->boolean('is_hidden')->nullable();
             $table->timestamps();
         });
     }

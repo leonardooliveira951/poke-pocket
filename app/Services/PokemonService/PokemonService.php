@@ -92,7 +92,7 @@ class PokemonService
     {
         try {
             
-            for ($id = 1; $id <= 1000; $id++) {
+            for ($id = 1; $id <= 100; $id++) {
                 $move = $this->pokeApiClient->getMoveById($id);
                 $englishDescription = "";
 
@@ -231,7 +231,9 @@ class PokemonService
                 ->wherePivot('pokemon_id', $pokemon->id)
                 ->first();
             if (!$existingRecord) {
-                $pokemon->abilities()->attach($abilityId);
+                $pokemon->abilities()->attach($abilityId, [
+                    'is_hidden' => $ability->is_hidden,
+                ]);
             }
         }
     }
