@@ -35,6 +35,7 @@ class PokemonService
             
             $this->attachPokemonTypes($pokemon->types, $pokemonModel);
             $this->attachPokemonStats($pokemon->stats, $pokemonModel);
+            $this->attachPokemonMoves($pokemon->moves, $pokemonModel);
         }
         return $pokemon;
     }
@@ -202,6 +203,20 @@ class PokemonService
                     'base_stat' => $stat->base_stat,
                     'effort' => $stat->effort
                 ]);
+            }
+        }
+    }
+
+    private function attachPokemonMoves($movesArrayFromPokeApi, $pokemon)
+    {
+        foreach ($movesArrayFromPokeApi as $move) {
+            $moveId = Str::between($move->move->url, 'move/', '/');
+
+            $existingRecord = $pokemon->moves()->wherePivot('move_id', $moveId)
+                ->wherePivot('pokemon_id', $pokemon->id)
+                ->first();
+            if (!$existingRecord) {
+                $pokemon->moves()->attach($moveId);
             }
         }
     }
