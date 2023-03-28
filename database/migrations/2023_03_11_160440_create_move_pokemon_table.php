@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pokemon_abilitie', function (Blueprint $table) {
+        Schema::create('move_pokemon', function (Blueprint $table) {
             $table->id();
             $table->integer('pokemon_id')->constrained();
-            $table->integer('ability_id')->constrained();
+            $table->integer('move_id')->constrained();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pokemon_abilitie');
+        Schema::dropIfExists('move_pokemon');
     }
 };
