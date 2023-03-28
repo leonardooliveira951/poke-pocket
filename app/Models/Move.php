@@ -12,6 +12,11 @@ class Move extends Model
     protected $fillable = [
     ];
 
+    public function pokemons()
+    {
+        return $this->belongsToMany(Pokemon::class);
+    }
+
     public function type()
     {
         return $this->belongsTo(Type::class);
