@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 50);
             $table->boolean('is_battle_only');
+            $table->foreignId('move_damage_class_id')->nullable()->constrained('move_damage_classes');
             $table->timestamps();
         });
     }

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('pp')->nullable();
             $table->smallInteger('priority')->default(0);
             $table->foreignId('type_id')->constrained('types');
-            $table->foreignId('move_damage_classes_id')->constrained('move_damage_classes');
+            $table->foreignId('move_damage_class_id')->constrained('move_damage_classes');
             $table->timestamps();
         });
     }

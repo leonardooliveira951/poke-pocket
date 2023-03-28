@@ -115,7 +115,7 @@ class PokemonService
                         'pp' => $move->pp,
                         'priority' => $move->priority,
                         'type_id' => $typeId,
-                        'move_damage_classes_id' => $damageClassId,
+                        'move_damage_class_id' => $damageClassId,
                     ]);
             }
         } catch (PokeApiClienItemNotFoundException $e) {
@@ -154,15 +154,21 @@ class PokemonService
 
     public function statFetchAndSave()
     {
+        $damageClassId = null;
         try {
             for ($id = 1; $id <= 15; $id++) {
                 $stat = $this->pokeApiClient->getStatById($id);
+
+                if ($stat->move_damage_class) {
+                    $damageClassId = Str::between($stat->move_damage_class->url, 'move-damage-class/', '/');
+                }
 
                 Stat::updateOrCreate(
                     ['id' => $id],
                     [
                         'name' => $stat->name,
                         'is_battle_only' => $stat->is_battle_only,
+                        'move_damage_class_id' => $damageClassId,
                     ]
                 );
             }
