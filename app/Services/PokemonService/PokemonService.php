@@ -36,6 +36,7 @@ class PokemonService
             $this->attachPokemonTypes($pokemon->types, $pokemonModel);
             $this->attachPokemonStats($pokemon->stats, $pokemonModel);
             $this->attachPokemonMoves($pokemon->moves, $pokemonModel);
+            $this->attachPokemonAbilities($pokemon->abilities, $pokemonModel);
         }
         return $pokemon;
     }
@@ -217,6 +218,20 @@ class PokemonService
                 ->first();
             if (!$existingRecord) {
                 $pokemon->moves()->attach($moveId);
+            }
+        }
+    }
+
+    private function attachPokemonAbilities($abilitiesArrayFromPokeApi, $pokemon)
+    {
+        foreach ($abilitiesArrayFromPokeApi as $ability) {
+            $abilityId = Str::between($ability->ability->url, 'ability/', '/');
+
+            $existingRecord = $pokemon->abilities()->wherePivot('ability_id', $abilityId)
+                ->wherePivot('pokemon_id', $pokemon->id)
+                ->first();
+            if (!$existingRecord) {
+                $pokemon->abilities()->attach($abilityId);
             }
         }
     }
