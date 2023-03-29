@@ -30,7 +30,7 @@ class PokeApiClient
         );
 
         if (is_null($item)) {
-            throw new PokeApiClienItemNotFoundException($id, $entityName);
+            throw new PokeApiClienItemNotFoundException($id);
         }
 
         return $item;
