@@ -20,8 +20,8 @@ class PokemonService
 
     public function externalFetchAndSave()
     {
-        for ($id = 1; $id<=10; $id++) {
-            $pokemon = $this->pokeApiClient->getPokemonById($id);
+        for ($id = 1; $id<=15; $id++) {
+            $pokemon = $this->pokeApiClient->abstractGet('pokemon', $id);
             $pokemonModel = Pokemon::firstOrCreate(
                 ['id' => $id],
                 [
@@ -44,8 +44,8 @@ class PokemonService
     public function abilityExternalFetchAndSave()
     {
         try {
-            for ($id = 1; $id <= 300; $id++) {
-                    $ability = $this->pokeApiClient->getAbilityById($id);
+            for ($id = 1; $id <= 20; $id++) {
+                    $ability = $this->pokeApiClient->abstractGet('ability', $id);
                     $englishDescription = "";
 
                     foreach ($ability->effect_entries as $description)
@@ -64,8 +64,7 @@ class PokemonService
                     );
             } 
         } catch (PokeApiClienItemNotFoundException $e) {
-            $lastInsert = $id - 1;
-            logger("Ability - Last inserted ID was $lastInsert");
+            logger($e->getMessage());
         }
     }
 
@@ -73,7 +72,7 @@ class PokemonService
     {
         try {
             for ($id = 1; $id <= 20; $id++) {
-                $type = $this->pokeApiClient->getTypeById($id);
+                $type = $this->pokeApiClient->abstractGet('type', $id);
 
                 Type::updateOrCreate(
                     ['id' => $id],
@@ -83,8 +82,7 @@ class PokemonService
                 );
             }
         } catch (PokeApiClienItemNotFoundException $e) {
-            $lastInsert = $id - 1;
-            logger("Type - Last inserted ID was $lastInsert");
+            logger($e->getMessage());
         }
     }
 
@@ -93,7 +91,7 @@ class PokemonService
         try {
             
             for ($id = 1; $id <= 100; $id++) {
-                $move = $this->pokeApiClient->getMoveById($id);
+                $move = $this->pokeApiClient->abstractGet('move', $id);
                 $englishDescription = "";
 
                 foreach ($move->effect_entries as $description) {
@@ -119,8 +117,7 @@ class PokemonService
                     ]);
             }
         } catch (PokeApiClienItemNotFoundException $e) {
-            $lastInsert = $id - 1;
-            logger("Move - Last inserted ID was $lastInsert");
+            logger($e->getMessage());
         }
     }
 
@@ -128,7 +125,7 @@ class PokemonService
     {
         try {
             for ($id = 1; $id <= 10; $id++) {
-                $moveDmgClass = $this->pokeApiClient->getMoveDmgClassById($id);
+                $moveDmgClass = $this->pokeApiClient->abstractGet('move-damage-class', $id);
                 $englishDescription = "";
 
                 foreach ($moveDmgClass->descriptions as $description)
@@ -147,8 +144,7 @@ class PokemonService
                 );
             }
         } catch (PokeApiClienItemNotFoundException $e) {
-            $lastInsert = $id - 1;
-            logger("Move Damage Class - Last inserted ID was $lastInsert");
+            logger($e->getMessage());
         }
     }
 
@@ -157,7 +153,7 @@ class PokemonService
         $damageClassId = null;
         try {
             for ($id = 1; $id <= 15; $id++) {
-                $stat = $this->pokeApiClient->getStatById($id);
+                $stat = $this->pokeApiClient->abstractGet('stat', $id);
 
                 if ($stat->move_damage_class) {
                     $damageClassId = Str::between($stat->move_damage_class->url, 'move-damage-class/', '/');
@@ -173,8 +169,7 @@ class PokemonService
                 );
             }
         } catch (PokeApiClienItemNotFoundException $e) {
-            $lastInsert = $id - 1;
-            logger("Stat - Last inserted ID was $lastInsert");
+            logger($e->getMessage());
         }
     }
 
