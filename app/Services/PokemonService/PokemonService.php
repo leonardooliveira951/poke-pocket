@@ -2,6 +2,7 @@
 
 namespace App\Services\PokemonService;
 
+use App\Enums\PokeApiEntities;
 use App\Exceptions\PokeApiClienItemNotFoundException;
 use App\Models\Ability;
 use App\Models\Move;
@@ -21,7 +22,7 @@ class PokemonService
     public function externalFetchAndSave()
     {
         for ($id = 1; $id<=15; $id++) {
-            $pokemon = $this->pokeApiClient->abstractGet('pokemon', $id);
+            $pokemon = $this->pokeApiClient->abstractGet(PokeApiEntities::POKEMON, $id);
             $pokemonModel = Pokemon::firstOrCreate(
                 ['id' => $id],
                 [
@@ -45,7 +46,7 @@ class PokemonService
     {
         try {
             for ($id = 1; $id <= 20; $id++) {
-                    $ability = $this->pokeApiClient->abstractGet('ability', $id);
+                    $ability = $this->pokeApiClient->abstractGet(PokeApiEntities::ABILITY, $id);
                     $englishDescription = "";
 
                     foreach ($ability->effect_entries as $description)
@@ -72,7 +73,7 @@ class PokemonService
     {
         try {
             for ($id = 1; $id <= 20; $id++) {
-                $type = $this->pokeApiClient->abstractGet('type', $id);
+                $type = $this->pokeApiClient->abstractGet(PokeApiEntities::TYPE, $id);
 
                 Type::updateOrCreate(
                     ['id' => $id],
@@ -91,7 +92,7 @@ class PokemonService
         try {
             
             for ($id = 1; $id <= 100; $id++) {
-                $move = $this->pokeApiClient->abstractGet('move', $id);
+                $move = $this->pokeApiClient->abstractGet(PokeApiEntities::MOVE, $id);
                 $englishDescription = "";
 
                 foreach ($move->effect_entries as $description) {
@@ -101,7 +102,7 @@ class PokemonService
                     }
                 }
                 $typeId = Str::between($move->type->url, 'type/', '/');
-                $damageClassId = Str::between($move->damage_class->url, 'move-damage-class/', '/');
+                $damageClassId = Str::between($move->damage_class->url, '{move-damage-class}/', '/');
 
                 Move::updateOrCreate(
                     ['id' => $id],
@@ -125,7 +126,7 @@ class PokemonService
     {
         try {
             for ($id = 1; $id <= 10; $id++) {
-                $moveDmgClass = $this->pokeApiClient->abstractGet('move-damage-class', $id);
+                $moveDmgClass = $this->pokeApiClient->abstractGet(PokeApiEntities::MOVE_DAMAGE_CLASS, $id);
                 $englishDescription = "";
 
                 foreach ($moveDmgClass->descriptions as $description)
@@ -153,7 +154,7 @@ class PokemonService
         $damageClassId = null;
         try {
             for ($id = 1; $id <= 15; $id++) {
-                $stat = $this->pokeApiClient->abstractGet('stat', $id);
+                $stat = $this->pokeApiClient->abstractGet(PokeApiEntities::STAT, $id);
 
                 if ($stat->move_damage_class) {
                     $damageClassId = Str::between($stat->move_damage_class->url, 'move-damage-class/', '/');

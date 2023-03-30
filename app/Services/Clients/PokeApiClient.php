@@ -2,6 +2,7 @@
 
 namespace App\Services\Clients;
 
+use App\Enums\PokeApiEntities;
 use App\Exceptions\MissingEnvValueException;
 use App\Exceptions\PokeApiClienItemNotFoundException;
 use Exception;
@@ -21,11 +22,11 @@ class PokeApiClient
         }
     }
 
-    public function abstractGet(string $entityName, int $id)
+    public function abstractGet(PokeApiEntities $entity, int $id)
     {
         $item = json_decode(
             Http::get(
-                $this->baseUri . "/{$entityName}/{$id}/"
+                $this->baseUri . "/{$entity->value}/{$id}/"
             )->getBody()->getContents()
         );
 
